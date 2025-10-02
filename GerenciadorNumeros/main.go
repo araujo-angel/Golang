@@ -3,14 +3,17 @@ package main
 import (
 	"errors"
 	"fmt"
+	"os"
 	"slices"
+	"strconv"
+	"strings"
 )
 
 func adicionar(numeros []int) ([]int, error) {
 	var n int
 	fmt.Print("Digite um número inteiro: ")
-	_, err := fmt.Scanln(&n)
-	if err != nil {
+	fmt.Scanln(&n)
+	if n < 1 {
 		return numeros, errors.New("entrada invalida")
 	}
 	numeros = append(numeros, n)
@@ -24,6 +27,31 @@ func listar(numeros []int) error {
 		fmt.Println(valor)
 	}
 	return nil
+}
+
+func ordenar(numeros []int) ([]int, error) {
+	if len(numeros) == 0 {
+		return nil, errors.New("array vazio")
+	}
+	opcao := 0
+	fmt.Println("Para ordenar crescente digite 1, decrescente digite 2: ")
+	fmt.Scanln(&opcao)
+	if opcao == 1 {
+		return crescente(numeros), nil
+	}
+	return decrescente(numeros), nil
+}
+
+func decrescente(numeros []int) []int {
+	slices.SortFunc(numeros, func(a, b int) int {
+		return b - a
+	})
+	return numeros
+}
+
+func crescente(numeros []int) []int {
+	slices.Sort(numeros)
+	return numeros
 }
 
 func remover(numeros []int) ([]int, error) {
@@ -79,6 +107,31 @@ func divisao() (int, error) {
 	return n1 / n2, nil
 }
 
+func exibirPares(numeros []int) ([]int, error) {
+	var result []int
+	for _, n := range numeros {
+		if n%2 == 0 {
+			result = append(result, n)
+		}
+	}
+	if len(result) == 0 {
+		return nil, errors.New("Nao existem numeros pares")
+	}
+	return result, nil
+}
+func exportar(numeros []int) error {
+	var strin []string
+	for _, n := range numeros {
+		strin = append(strin, strconv.Itoa(n))
+	}
+	texto := strings.Join(strin, ",")
+	err := os.WriteFile("slice.txt", []byte(texto), 0644)
+	if err != nil {
+		return fmt.Errorf("erro durante exportar: %w", err)
+	}
+	return nil
+}
+
 func esvaziar(numeros []int) ([]int, error) {
 	if len(numeros) == 0 {
 		return numeros, errors.New("array vazio")
@@ -97,6 +150,9 @@ func main() {
 		fmt.Print("4 - Visualizar estatisticas \n")
 		fmt.Print("5 - Dividir \n")
 		fmt.Print("6 - Esvaziar a lista \n")
+		fmt.Print("7 - Ordenar \n")
+		fmt.Print("8 - Exibir pares \n")
+		fmt.Print("9 - Exportar array \n")
 		fmt.Print("0 - Encerrar \n")
 		_, err := fmt.Scanln(&opcao)
 		if err != nil {
@@ -138,6 +194,25 @@ func main() {
 				fmt.Println("Erro:", err)
 			} else {
 				fmt.Println("Resultado da esvaziar: ", numeros)
+			}
+		case 7:
+			numeros, err = ordenar(numeros)
+			if err != nil {
+				fmt.Println("Erro:", err)
+			}
+		case 8:
+			pares, err := exibirPares(numeros)
+			if err != nil {
+				fmt.Println("Erro:", err)
+			} else {
+				fmt.Println("Pares", pares)
+			}
+		case 9:
+			err = exportar(numeros)
+			if err != nil {
+				fmt.Println("Erro:", err)
+			} else {
+				fmt.Println("Array exportado para este mesmo diretorio com sucesso!")
 			}
 		case 0:
 			if opcao == 0 {
