@@ -119,6 +119,7 @@ func exibirPares(numeros []int) ([]int, error) {
 	}
 	return result, nil
 }
+
 func exportar(numeros []int) error {
 	var strin []string
 	for _, n := range numeros {
@@ -196,9 +197,11 @@ func main() {
 				fmt.Println("Resultado da esvaziar: ", numeros)
 			}
 		case 7:
-			numeros, err = ordenar(numeros)
+			sliceOrd, err := ordenar(numeros)
 			if err != nil {
 				fmt.Println("Erro:", err)
+			} else {
+				fmt.Println("Array ordenado:", sliceOrd)
 			}
 		case 8:
 			pares, err := exibirPares(numeros)
